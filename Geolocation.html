@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBU Distance Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #ff6b35, #f7931e, #ff8c42, #ffa726);
+            background-size: 400% 400%;
+            animation: gradientWave 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientWave {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Geometric background elements */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .shape:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            left: 80%;
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 80%;
+            left: 20%;
+            animation-delay: 10s;
+            border-radius: 20%;
+        }
+
+        .shape:nth-child(4) {
+            width: 120px;
+            height: 120px;
+            top: 10%;
+            left: 70%;
+            animation-delay: 15s;
+            border-radius: 30%;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(20px) rotate(240deg); }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border-radius: 35px;
+            padding: 45px;
+            box-shadow: 0 25px 80px rgba(255, 107, 53, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 90%;
+            max-width: 520px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            animation: containerPulse 4s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        @keyframes containerPulse {
+            0%, 100% { box-shadow: 0 25px 80px rgba(255, 107, 53, 0.4); }
+            50% { box-shadow: 0 30px 100px rgba(255, 107, 53, 0.6); }
+        }
+
+        /* Glowing border effect */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e, #ff8c42, #ffa726);
+            border-radius: 37px;
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .university-badge {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2em;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 15px 35px rgba(255, 107, 53, 0.5);
+            position: relative;
+            animation: badgeSpin 10s linear infinite;
+        }
+
+        @keyframes badgeSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .university-badge::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            border-radius: 50%;
+            animation: shine 2s linear infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #fff, #ffe0b3, #fff, #ffcc80);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShimmer 4s ease infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes textShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 35px;
+            color: #fff8e7;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .location-button {
+            background: linear-gradient(135deg, #ff6b35, #f7931e, #ff8c42);
+            background-size: 200% 200%;
+            animation: buttonGradient 3s ease infinite;
+            border: none;
+            padding: 22px 50px;
+            border-radius: 60px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 35px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes buttonGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .location-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: all 0.6s;
+            transform: translate(-50%, -50%);
+        }
+
+        .location-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .location-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 25px 60px rgba(255, 107, 53, 0.7);
+        }
+
+        .location-button:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .location-button:disabled {
+            background: linear-gradient(135deg, #bbb, #999);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            display: none;
+            margin: 30px 0;
+        }
+
+        .spinner-container {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ff6b35;
+            border-right: 4px solid #f7931e;
+            border-radius: 50%;
+            animation: complexSpin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        @keyframes complexSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .loading-text {
+            font-size: 1.1em;
+            color: #ffe0b3;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .result {
+            display: none;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(247, 147, 30, 0.3));
+            border: 3px solid #ff6b35;
+            border-radius: 25px;
+            padding: 30px;
+            margin: 25px 0;
+            animation: resultReveal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 20px 60px rgba(255, 107, 53, 0.3);
+            position: relative;
+        }
+
+        @keyframes resultReveal {
+            from {
+                opacity: 0;
+                transform: scale(0.5) rotateY(90deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+            }
+        }
+
+        .distance-value {
+            font-size: 2.8em;
+            font-weight: 800;
+            color: #ff6b35;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(255, 107, 53, 0.5);
+            animation: numberCount 2s ease-out;
+        }
+
+        @keyframes numberCount {
+            from { transform: scale(2) rotate(10deg); opacity: 0; }
+            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .distance-message {
+            font-size: 1.4em;
+            line-height: 1.6;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .coordinates {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 18px;
+            margin: 20px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.95em;
+            color: #ffe0b3;
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 107, 53, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .info-card:hover::before {
+            left: 100%;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff6b35;
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.3);
+        }
+
+        .info-card h4 {
+            color: #f7931e;
+            margin-bottom: 10px;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .info-card p {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: white;
+        }
+
+        .error {
+            display: none;
+            background: linear-gradient(135deg, rgba(255, 59, 48, 0.2), rgba(255, 69, 58, 0.3));
+            border: 3px solid #ff3b30;
+            border-radius: 25px;
+            padding: 25px;
+            margin: 25px 0;
+            color: #ffcccc;
+            animation: errorShake 0.5s ease-in-out;
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Floating university symbols */
+        .floating-symbol {
+            position: absolute;
+            font-size: 2em;
+            color: rgba(255, 255, 255, 0.1);
+            animation: floatSymbol 15s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes floatSymbol {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 25px;
+                margin: 20px;
+            }
+            h1 { font-size: 2.2em; }
+            .location-button {
+                padding: 18px 35px;
+                font-size: 1.1em;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .distance-value { font-size: 2.2em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background geometric shapes -->
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- Floating university symbols -->
+    <div class="floating-symbol" style="left: 15%; animation-delay: 0s;">🎓</div>
+    <div class="floating-symbol" style="left: 85%; animation-delay: 5s;">📚</div>
+    <div class="floating-symbol" style="left: 45%; animation-delay: 10s;">🏛️</div>
+    <div class="floating-symbol" style="left: 25%; animation-delay: 15s;">📍</div>
+    <div class="floating-symbol" style="left: 75%; animation-delay: 20s;">🌟</div>
+
+    <div class="container">
+        <div class="university-badge">KBU</div>
+        <h1>Distance Tracker</h1>
+        <p class="subtitle">Real-time location tracking to Kasem Bundit University</p>
+
+        <button class="location-button" id="locationBtn" onclick="getCurrentLocation()">
+            📍 WHERE AM I?
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+            <div class="loading-text">Acquiring GPS coordinates...</div>
+        </div>
+
+        <div class="result" id="result">
+            <div class="distance-value" id="distanceValue"></div>
+            <div class="distance-message" id="distanceMessage"></div>
+
+            <div class="coordinates" id="coordinates"></div>
+
+
+        </div>
+
+        <div class="error" id="error">
+            <h3>🚫 Location Access Required</h3>
+            <p>Please enable location permissions and try again to calculate your distance from KBU.</p>
+        </div>
+    </div>
+
+    <script>
+        // Kasem Bundit University coordinates
+        const KBULat = 13.8037877;
+        const KBULon = 100.7368277;
+
+        // Convert degrees to radians
+        function toRadians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        // Enhanced Haversine formula with higher precision
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371.0088; // More precise Earth's radius in kilometers
+            const φ1 = toRadians(lat1);
+            const φ2 = toRadians(lat2);
+            const Δφ = toRadians(lat2 - lat1);
+            const Δλ = toRadians(lon2 - lon1);
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c; // Distance in kilometers
+        }
+
+        function getCurrentLocation() {
+            const btn = document.getElementById('locationBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const error = document.getElementById('error');
+
+            // Reset display states
+            result.style.display = 'none';
+            error.style.display = 'none';
+
+            // Enhanced geolocation check
+            if (!navigator.geolocation) {
+                error.innerHTML = '<h3>🚫 Geolocation Unavailable</h3><p>Your browser or device doesn\'t support precise location services.</p>';
+                error.style.display = 'block';
+                return;
+            }
+
+            // Show enhanced loading state
+            btn.disabled = true;
+            btn.innerHTML = '🛰️ GPS Active...';
+            loading.style.display = 'block';
+
+            // Premium geolocation configuration
+            const options = {
+                enableHighAccuracy: true,    // Maximum GPS precision
+                timeout: 15000,              // Extended timeout for accuracy
+                maximumAge: 0                // Always get fresh location data
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                // Enhanced success callback
+                function(position) {
+                    const userLat = position.coords.latitude;
+                    const userLon = position.coords.longitude;
+                    const accuracy = Math.round(position.coords.accuracy);
+                    const speed = position.coords.speed;
+                    const timestamp = new Date(position.timestamp);
+
+                    // Calculate precise distance to KBU
+                    const distance = calculateDistance(userLat, userLon, KBULat, KBULon);
+
+                    // Dynamic distance message based on proximity
+                    let proximityMessage = '';
+                    if (distance < 0.1) {
+                        proximityMessage = '🎉 You\'re practically at KBU!';
+                    } else if (distance < 1) {
+                        proximityMessage = '🚶 Just a short walk to campus!';
+                    } else if (distance < 5) {
+                        proximityMessage = '🚗 Quick drive to university!';
+                    } else if (distance < 20) {
+                        proximityMessage = '🛣️ Reasonable commute distance!';
+                    } else {
+                        proximityMessage = '✈️ Quite far from campus!';
+                    }
+
+                    // Animate number counting effect
+                    animateValue('distanceValue', 0, distance.toFixed(3), 1500, ' KM');
+
+                    document.getElementById('distanceMessage').innerHTML = `
+                        <strong>You are ${distance.toFixed(3)} KM away from Kasem Bundit University!</strong><br>
+                        <small style="color: #ffe0b3;">${proximityMessage}</small>
+                    `;
+
+                    document.getElementById('coordinates').innerHTML = `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
+                            <div>
+                                <strong>📍 Your Position:</strong><br>
+                                Lat: ${userLat.toFixed(8)}°<br>
+                                Lon: ${userLon.toFixed(8)}°
+                            </div>
+                            <div>
+                                <strong>🏫 KBU Position:</strong><br>
+                                Lat: ${KBULat.toFixed(8)}°<br>
+                                Lon: ${KBULon.toFixed(8)}°
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px; text-align: center; font-size: 0.85em; color: #ffcc80;">
+                            Last updated: ${timestamp.toLocaleTimeString()}
+                        </div>
+                    `;
+
+
+
+                    // Show result with enhanced animation
+                    loading.style.display = 'none';
+                    result.style.display = 'block';
+                    btn.disabled = false;
+                    btn.innerHTML = '🔄 Refresh Location';
+
+                    // Add celebration effect for very close distances
+                    if (distance < 0.5) {
+                        createCelebrationEffect();
+                    }
+                },
+                // Enhanced error handling
+                function(err) {
+                    loading.style.display = 'none';
+                    btn.disabled = false;
+                    btn.innerHTML = '📍 WHERE AM I?';
+
+                    let errorMessage = '';
+                    let errorIcon = '';
+
+                    switch(err.code) {
+                        case err.PERMISSION_DENIED:
+                            errorIcon = '🚫';
+                            errorMessage = '<h3>🚫 Location Permission Denied</h3><p>Please enable location access in your browser settings and refresh the page.</p>';
+                            break;
+                        case err.POSITION_UNAVAILABLE:
+                            errorIcon = '📡';
+                            errorMessage = '<h3>📡 GPS Signal Lost</h3><p>Unable to determine your position. Please ensure GPS is enabled and try again.</p>';
+                            break;
+                        case err.TIMEOUT:
+                            errorIcon = '⏰';
+                            errorMessage = '<h3>⏰ Location Timeout</h3><p>GPS acquisition took too long. Please try again in a few moments.</p>';
+                            break;
+                        default:
+                            errorIcon = '❌';
+                            errorMessage = '<h3>❌ Location Error</h3><p>An unexpected error occurred. Please refresh and try again.</p>';
+                            break;
+                    }
+
+                    error.innerHTML = errorMessage;
+                    error.style.display = 'block';
+                },
+                options
+            );
+        }
+
+        // Animated number counting function
+        function animateValue(elementId, start, end, duration, suffix = '') {
+            const element = document.getElementById(elementId);
+            const startTime = Date.now();
+            const startNum = parseFloat(start);
+            const endNum = parseFloat(end);
+
+            function updateValue() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3); // Ease-out cubic
+                const current = startNum + (endNum - startNum) * easeProgress;
+
+                element.textContent = current.toFixed(3) + suffix;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateValue);
+                }
+            }
+
+            updateValue();
+        }
+
+        // Celebration effect for close distances
+        function createCelebrationEffect() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.innerHTML = '🎉';
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.fontSize = '2em';
+                    confetti.style.zIndex = '1000';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.animation = 'floatSymbol 3s linear forwards';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 100);
+            }
+        }
+
+        // Enhanced floating symbols
+        document.addEventListener('DOMContentLoaded', function() {
+            const symbols = ['🎓', '📚', '🏛️', '📍', '🌟', '🎯', '📖', '🏆'];
+
+            setInterval(() => {
+                const symbol = document.createElement('div');
+                symbol.className = 'floating-symbol';
+                symbol.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+                symbol.style.left = Math.random() * 100 + 'vw';
+                symbol.style.animationDelay = '0s';
+                symbol.style.animationDuration = (10 + Math.random() * 10) + 's';
+                document.body.appendChild(symbol);
+
+                setTimeout(() => symbol.remove(), 25000);
+            }, 3000);
+        });
+    </script>
+</body>
+</body>
+</html>

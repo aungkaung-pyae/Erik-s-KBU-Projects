@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Calculate Change</title>
+        <style>
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #74ebd5, #acb6e5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .container {
+                background: white;
+                padding: 30px;
+                border-radius: 20px;
+                box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+                width: 400px;
+                text-align: center;
+                transition: 0.3s ease-in-out;
+            }
+
+            .container:hover {
+                transform: scale(1.02);
+            }
+
+            h2 {
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+            label {
+                font-weight: bold;
+                display: block;
+                margin-bottom: 10px;
+                color: #555;
+            }
+
+            input {
+                width: 90%;
+                padding: 10px;
+                border-radius: 10px;
+                border: 1px solid #aaa;
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                border: none;
+                border-radius: 10px;
+                font-size: 16px;
+                cursor: pointer;
+                margin: 8px;
+                width: 120px;
+                transition: 0.3s;
+            }
+
+            .btn-submit {
+                background: #4caf50;
+                color: white;
+            }
+
+            .btn-submit:hover {
+                background: #45a049;
+            }
+
+            .btn-back {
+                background: #f44336;
+                color: white;
+            }
+
+            .btn-back:hover {
+                background: #d32f2f;
+            }
+
+            #errorMsg {
+                color: red;
+                font-size: 14px;
+                margin-bottom: 10px;
+                display: none;
+            }
+
+            #result {
+                margin-top: 20px;
+                text-align: left;
+            }
+
+            .note {
+                background: #f0f0f0;
+                padding: 8px 12px;
+                margin: 5px 0;
+                border-radius: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h2>💰 Calculate Change</h2>
+            <label for="amount">Enter Amount (฿):</label>
+            <input type="number" id="amount" placeholder="Enter amount here" />
+            <small id="errorMsg"></small><br />
+            <button class="btn btn-submit" onclick="calculateChange()">
+                Submit
+            </button>
+            <button class="btn btn-back" onclick="goBack()">Back</button>
+            <div id="result"></div>
+        </div>
+
+        <script>
+            function calculateChange() {
+                let amountInput = document.getElementById("amount");
+                let amount = parseInt(amountInput.value);
+                let errorMsg = document.getElementById("errorMsg");
+                let resultDiv = document.getElementById("result");
+                resultDiv.innerHTML = "";
+
+                // Validation
+                if (isNaN(amount) || amountInput.value.trim() === "") {
+                    errorMsg.textContent = "⚠ Please enter a valid amount.";
+                    errorMsg.style.display = "block";
+                    return;
+                }
+                if (amount <= 0) {
+                    errorMsg.textContent = "⚠ Please enter a positive number.";
+                    errorMsg.style.display = "block";
+                    return;
+                }
+
+                errorMsg.style.display = "none"; // clear error if valid
+
+                let denominations = [1000, 500, 100, 50, 20, 10, 5, 2, 1];
+
+                for (let i = 0; i < denominations.length; i++) {
+                    let count = Math.floor(amount / denominations[i]);
+                    if (count > 0) {
+                        let noteDiv = document.createElement("div");
+                        noteDiv.classList.add("note");
+                        noteDiv.textContent = count + " x ฿" + denominations[i];
+                        resultDiv.appendChild(noteDiv);
+                    }
+                    amount %= denominations[i];
+                }
+            }
+
+            function goBack() {
+                document.getElementById("amount").value = "";
+                document.getElementById("result").innerHTML = "";
+                document.getElementById("errorMsg").style.display = "none";
+            }
+        </script>
+    </body>
+</html>
